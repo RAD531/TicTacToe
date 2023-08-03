@@ -8,7 +8,7 @@ const HTMLRender = (props) => {
     };
 
     return (
-        <div className='bigCounter'>
+        <div className='bigCounter' style={{padding: "0px"}}>
             <div className='calender'>
                 <i className='far fa-clock'></i>
             </div>

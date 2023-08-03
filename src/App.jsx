@@ -6,8 +6,8 @@ const App = () => {
     return (
         <>
             <Container fluid>
-                <Row className='row align-items-center min-vh-100'>
-                    <Col className='p-0'>
+                <Row className='row align-items-center'>
+                    <Col>
                         <SimpleCounter></SimpleCounter>
                     </Col>
                 </Row>

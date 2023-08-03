@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Button } from "reactstrap";
+import { Row, Col, Button, Input } from "reactstrap";
 import Counter from './Counter.jsx';
-import CountdownInputGroup from './CountdownInputGroup.jsx';
 
 const SimpleCounter = (props) => {
 
@@ -50,36 +49,69 @@ const SimpleCounter = (props) => {
                     timerControl={timerControl}
                 />
             </Row>
-            <Row>
-                <Col>
-                    <CountdownInputGroup
-                        inputGroupHours={inputGroupHours}
-                        inputGroupMinutes={inputGroupMinutes}
-                        inputGroupSeconds={inputGroupSeconds}
-                        setHours={setInputGroupHours}
-                        setMinutes={setInputGroupMinutes}
-                        setSeconds={setInputGroupSeconds}
-                    />
-                    <Col>
-                        <CountdownInputGroup
-                            inputGroupHours={alertGroupHours}
-                            inputGroupMinutes={alertGroupMinutes}
-                            inputGroupSeconds={alertGroupSeconds}
-                            setHours={setAlertGroupHours}
-                            setMinutes={setAlertGroupMinutes}
-                            setSeconds={setAlertGroupSeconds}
-                        />
-                    </Col>
+            <Row className='p-3 text-center'>
+                <Col md="6">
+                    <Row>
+                        <h5 className='pt-2 pb-2'>Change the time</h5>
+                        <Col md="4">
+                            <div className="form-floating">
+                                <Input onChange={(e) => setInputGroupHours(parseInt(e.target.value, 10))} value={inputGroupHours} placeholder="0" min="0" max="23" className="form-control" type="number" />
+                            </div>
+                        </Col>
 
-                    <Col>
-                        <Button onClick={handleButtonClick}></Button>
-                    </Col>
+                        <Col md="4">
+                            <div className="form-floating">
+                                <Input onChange={(e) => setInputGroupMinutes(parseInt(e.target.value, 10))} value={inputGroupMinutes} placeholder="0" min="0" max="59" className="form-control" type="number" />
+                            </div>
+                        </Col>
+
+                        <Col md="4">
+                            <div className="form-floating">
+                                <Input onChange={(e) => setInputGroupSeconds(parseInt(e.target.value, 10))} value={inputGroupSeconds} placeholder="0" min="0" max="59" className="form-control" type="number" />
+                            </div>
+                        </Col>
+                    </Row>
+
+                    <Row>
+                        <h5 className='pt-2 pb-2'>Set alert time</h5>
+                        <Col md="4">
+                            <div className="form-floating">
+                                <Input onChange={(e) => setAlertGroupHours(parseInt(e.target.value, 10))} value={alertGroupHours} placeholder="0" min="0" max="23" className="form-control" type="number" />
+                            </div>
+                        </Col>
+
+                        <Col md="4">
+                            <div className="form-floating">
+                                <Input onChange={(e) => setAlertGroupMinutes(parseInt(e.target.value, 10))} value={alertGroupMinutes} placeholder="0" min="0" max="59" className="form-control" type="number" />
+                            </div>
+                        </Col>
+
+                        <Col md="4">
+                            <div className="form-floating">
+                                <Input onChange={(e) => setAlertGroupSeconds(parseInt(e.target.value, 10))} value={alertGroupSeconds} placeholder="0" min="0" max="59" className="form-control" type="number" />
+                            </div>
+                        </Col>
+                    </Row>
+
+                    <Row className='pt-4'>
+                        <Col md="12">
+                            <Button color="success" onClick={handleButtonClick}>Submit Time and Alert</Button>
+                        </Col>
+                    </Row>
                 </Col>
 
-                <Col>
-                    <Button onClick={() => setTimerControl("play")}>Play</Button>
-                    <Button onClick={() => setTimerControl("pause")}>Pause</Button>
-                    <Button onClick={() => setTimerControl("stop")}>Stop</Button>
+                <Col md="6">
+                    <Row>
+                        <Col md="4" className='p-0'>
+                            <Button color="primary" onClick={() => setTimerControl("play")}>Play</Button>
+                        </Col>
+                        <Col md="4" className='p-0'>
+                            <Button color="warning" onClick={() => setTimerControl("pause")}>Pause</Button>
+                        </Col>
+                        <Col md="4" className='p-0'>
+                            <Button color="danger" onClick={() => setTimerControl("stop")}>Stop</Button>
+                        </Col>
+                    </Row>
                 </Col>
             </Row>
         </>
