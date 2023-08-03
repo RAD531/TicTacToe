@@ -5,34 +5,48 @@ import Counter from './Counter.jsx';
 const SimpleCounter = (props) => {
 
     // State variables to hold the values from the child component
+
+    //input group
     const [inputGroupHours, setInputGroupHours] = useState(0);
     const [inputGroupMinutes, setInputGroupMinutes] = useState(0);
     const [inputGroupSeconds, setInputGroupSeconds] = useState(0);
 
+    //alert group
     const [alertGroupHours, setAlertGroupHours] = useState(0);
     const [alertGroupMinutes, setAlertGroupMinutes] = useState(0);
     const [alertGroupSeconds, setAlertGroupSeconds] = useState(0);
 
+    //countdown control
     const [timerControl, setTimerControl] = useState("play");
 
+    //has custom time been set
     const [haveSetCustomTime, setCustomTime] = useState(false);
 
+    //handle the custom time and alert validation
     const handleButtonClick = () => {
-        // Check if input values are valid numbers
+
         if (
-            typeof inputGroupHours === "number" &&
-            typeof inputGroupMinutes === "number" &&
-            typeof inputGroupSeconds === "number" &&
-            inputGroupHours >= 0 &&
-            inputGroupHours <= 24 &&
-            inputGroupMinutes >= 0 &&
-            inputGroupMinutes <= 59 &&
-            inputGroupSeconds >= 0 &&
-            inputGroupSeconds <= 59
-        ) {
-            setCustomTime(true);
+            checkValidEntry(inputGroupHours, 0, 24, "number") && 
+            checkValidEntry(inputGroupMinutes, 0, 59, "number") && 
+            checkValidEntry(inputGroupSeconds, 0, 59, "number") &&
+            checkValidEntry(alertGroupHours, 0, 24, "number") && 
+            checkValidEntry(alertGroupMinutes, 0, 59, "number") && 
+            checkValidEntry(alertGroupSeconds, 0, 59, "number"))
+            {
+                //set to true to trigger in counter child
+                setCustomTime(true);
+            }
+        
+        else{
+            alert("Your times are incorrect format");
         }
     };
+
+    //check inputs are within times
+    const checkValidEntry = (value, greaterOrEqualTo, lessOrEqualTo, dataType) => {
+        let result = false;
+        return result = typeof value === dataType && value >= greaterOrEqualTo && value <= lessOrEqualTo ? true : false;
+    }
 
     return (
         <>
