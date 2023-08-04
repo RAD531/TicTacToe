@@ -22,19 +22,20 @@ const App = () => {
                 <Row className='p-4 bg-dark text-white'>
                     <Col>
                         <Row>
-                            <Col md="6">
+                            <Col xs="6" className='p-2'>
                                 <div className="form-floating">
                                     <Input onChange={(e) => setInputColor(e.target.value)} value={inputColor} placeholder="blue" min="1" max="20" className="form-control" type="text" />
+                                    <label className="text-dark" htmlFor="floatingInput">name, hex, rgb or rbga</label>
                                 </div>
                             </Col>
 
-                            <Col md="6">
+                            <Col xs="6" className='align-self-center p-2'>
                                 <Button onClick={() => setAddedColor(inputColor)} color="primary">Add Color</Button>
                             </Col>
                         </Row>
                     </Col>
-                    <Col>
-                        <Button onClick={(event) => { setCycle(!cycle); event.target.innerText = event.target.innerText === 'Cycle Through Lights' ? 'Do Not Cycle' : 'Cycle Through Lights'; }}>Cycle Through Lights</Button>
+                    <Col xs="12" md="6" className='align-self-center p-2'>
+                        <Button onClick={(event) => { setCycle(!cycle); event.target.innerText = event.target.innerText === 'Cycle Through Lights' ? 'Do Not Cycle' : 'Cycle Through Lights'; }} className="align-middle" color='success'>Cycle Through Lights</Button>
                     </Col>
                 </Row>
 
