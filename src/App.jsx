@@ -4,23 +4,19 @@ import TicTacToe from './TicTacToe.jsx';
 
 const App = () => {
 
-    const [addedColor, setAddedColor] = useState("");
-    const [inputColor, setInputColor] = useState("");
-    const [cycle, setCycle] = useState(false);
-
     return (
         <>
             <Container fluid className='text-center'>
                 <Row className='p-4 bg-dark text-white'>
                     <h3>Tic Tac Toe Using React</h3>
                 </Row>
-                <Row className='row align-items-center pt-4 pb-4'>
+                <Row className='row align-items-center pb-4 bg-secondary'>
                     <Col>
                         <TicTacToe></TicTacToe>
                     </Col>
                 </Row>
 
-                <Row className='p-3'>
+                <Row className='p-3 bg-secondary'>
                     <Col xs="12">
                         Made with ❤️ by Ryan Daniels
                     </Col>

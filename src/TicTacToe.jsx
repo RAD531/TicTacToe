@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Annoucement from './Annoucement.jsx';
 import ResetButton from './ResetButton.jsx';
 import Tile from './Tile.jsx';
+import SelectMenu from './SelectMenu.jsx';
 
 class TicTacToe extends Component {
 
@@ -13,16 +14,21 @@ class TicTacToe extends Component {
                 ' ', ' ', ' ',
                 ' ', ' ', ' '
             ],
-            turn: 'x',
             winner: null,
+            turn: null,
+            gameMessage: null,
+            gameStart: false,
             maxPlayer: 'x',
-            minPlayer: 'o'
+            minPlayer: 'o',
+            playerOne: { name: null, symbol: 'x', human: null },
+            playerTwo: { name: null, symbol: 'o', human: null },
+            againstAI: false,
         }
     };
 
-    tie(board){
+    tie(board) {
         let moves = board.join('').replace(/ /g, '');
-        if (moves.length === 9){
+        if (moves.length === 9) {
             return true;
         }
 
@@ -41,40 +47,41 @@ class TicTacToe extends Component {
             (board[2] === player && board[4] === player && board[6] === player)
         ) {
             return true;
-        } else{
+        } else {
             return null;
         }
     }
 
-    copyBoard(board){
+    copyBoard(board) {
         return board.slice(0);
     }
 
-    validMove(move, player, board){
+    validMove(move, player, board) {
         let newBoard = this.copyBoard(board);
-        if (newBoard[move] === ' '){
+        if (newBoard[move] === ' ') {
             newBoard[move] = player;
             return newBoard;
         }
 
-        else{
+        else {
             return null;
         }
     }
 
-    findAiMove(board){
+    findAiMove(board) {
         let bestMoveScore = 100;
         let move = null;
+
         //test all possible moves if game not over
-        if (this.winner(board, 'x') || this.winner(board, 'o') || this.tie(board)){
+        if (this.winner(board, 'x') || this.winner(board, 'o') || this.tie(board)) {
             return null;
         }
 
-        for(let i = 0; i < board.length; i++){
+        for (let i = 0; i < board.length; i++) {
             let newBoard = this.validMove(i, this.state.minPlayer, board);
-            if (newBoard){
+            if (newBoard) {
                 let moveScore = this.maxScore(newBoard);
-                if (moveScore < bestMoveScore){
+                if (moveScore < bestMoveScore) {
                     bestMoveScore = moveScore;
                     move = i;
                 }
@@ -84,26 +91,26 @@ class TicTacToe extends Component {
         return move;
     }
 
-    minScore(board){
-        if (this.winner(board, 'x')){
+    minScore(board) {
+        if (this.winner(board, 'x')) {
             return 10;
         }
 
-        else if (this.winner(board, 'o')){
+        else if (this.winner(board, 'o')) {
             return -10;
         }
 
-        else if (this.tie(board)){
+        else if (this.tie(board)) {
             return 0;
         }
 
-        else{
+        else {
             let bestMoveValue = 100;
-            for(let i = 0; i < board.length; i++){
+            for (let i = 0; i < board.length; i++) {
                 let newBoard = this.validMove(i, this.state.minPlayer, board);
-                if (newBoard){
+                if (newBoard) {
                     let predictedMoveValue = this.maxScore(newBoard);
-                    if (predictedMoveValue < bestMoveValue){
+                    if (predictedMoveValue < bestMoveValue) {
                         bestMoveValue = predictedMoveValue;
                     }
                 }
@@ -113,26 +120,26 @@ class TicTacToe extends Component {
         }
     }
 
-    maxScore(board){
-        if (this.winner(board, 'x')){
+    maxScore(board) {
+        if (this.winner(board, 'x')) {
             return 10;
         }
 
-        else if (this.winner(board, 'o')){
+        else if (this.winner(board, 'o')) {
             return -10;
         }
 
-        else if (this.tie(board)){
+        else if (this.tie(board)) {
             return 0;
         }
 
-        else{
+        else {
             let bestMoveValue = -100;
-            for(let i = 0; i < board.length; i++){
+            for (let i = 0; i < board.length; i++) {
                 let newBoard = this.validMove(i, this.state.maxPlayer, board);
-                if (newBoard){
+                if (newBoard) {
                     let predictedMoveValue = this.minScore(newBoard);
-                    if (predictedMoveValue > bestMoveValue){
+                    if (predictedMoveValue > bestMoveValue) {
                         bestMoveValue = predictedMoveValue;
                     }
                 }
@@ -142,48 +149,76 @@ class TicTacToe extends Component {
         }
     }
 
-    gameLoop(move){
+    gameLoop(move) {
+
         let player = this.state.turn;
-        let currentGameBoard = this.validMove(move, player, this.state.gameBoard);
-        if (this.winner(currentGameBoard, player)){
-            this.setState({
-                gameBoard: currentGameBoard,
-                winner: player
-            });
+        console.log(player);
+        let currentGameBoard = null;
+
+        if (player.human) {
+            currentGameBoard = this.validMove(move, player.symbol, this.state.gameBoard);
+
+            this.setState(
+                prevState => ({
+                    turn: prevState.turn.symbol === "x" ? prevState.playerTwo : prevState.playerOne
+                }),
+                () => {
+                    this.updateBoard(currentGameBoard, player, () => {
+                        if ((player.human && !this.state.playerOne.human) || (player.human && !this.state.playerTwo.human)) {
+                            this.gameLoop();
+                        }
+                    });
+                }
+            );
+        }
+
+        else {
+            currentGameBoard = this.state.gameBoard;
+            currentGameBoard = this.validMove(this.findAiMove(currentGameBoard), player.symbol, currentGameBoard);
+
+            console.log("run again");
+            this.setState(
+                prevState => ({
+                    turn: prevState.turn.symbol === "x" ? prevState.playerTwo : prevState.playerOne
+                }),
+                () => {
+                    this.updateBoard(currentGameBoard, player, () => {
+                        return;
+                    });
+                }
+            );
+        }
+    }
+
+    updateBoard(currentGameBoard, player, callback) {
+        if (!currentGameBoard || this.state.winner != null) {
             return;
         }
 
-        if (this.tie(currentGameBoard)){
+        if (this.winner(currentGameBoard, player.symbol)) {
             this.setState({
                 gameBoard: currentGameBoard,
-                winner: 'd'
-            });
+                winner: player.symbol,
+                gameMessage: player.name + " (" + player.symbol + ")" + ' wins the game!'
+            }, callback);
             return;
         }
 
-        player = 'o';
-        currentGameBoard = this.validMove(this.findAiMove(currentGameBoard), player, currentGameBoard);
-        if (this.winner(currentGameBoard, player)){
+        if (this.tie(currentGameBoard)) {
             this.setState({
                 gameBoard: currentGameBoard,
-                winner: player
-            });
-            return;
-        }
-
-        if (this.tie(currentGameBoard)){
-            this.setState({
-                gameBoard: currentGameBoard,
-                winner: 'd'
-            });
+                winner: 'd',
+                gameMessage: 'The Game Finshes a Draw!'
+            }, callback);
             return;
         }
 
         this.setState({
             gameBoard: currentGameBoard
-
-        });
+        }, callback);
     }
+
+
 
     resetBoard() {
         this.setState({
@@ -192,27 +227,66 @@ class TicTacToe extends Component {
                 ' ', ' ', ' ',
                 ' ', ' ', ' '
             ],
-            turn: 'x',
             winner: null,
+            turn: null,
+            gameMessage: null,
+            gameStart: false,
             maxPlayer: 'x',
-            minPlayer: 'o'
+            minPlayer: 'o',
+            againstAI: false,
         })
     }
 
     render() {
         return <div className="container">
-            <div className='menu'>
-                <Annoucement winner={this.state.winner}></Annoucement>
-                <ResetButton reset={this.resetBoard.bind(this)}></ResetButton>
-            </div>
-            {this.state.gameBoard.map((value, i) => (
-                <Tile
-                    key={i}
-                    loc={i}
-                    value={value}
+
+            <div style={{ display: this.state.gameStart ? "none" : "" }}>
+                <SelectMenu
+                    playerOneValue={this.state.playerOne}
+                    setPlayerOneName={(name) => this.setState({ playerOne: { ...this.state.playerOne, name } })}
+                    setPlayerOneHuman={(human) => this.setState({ playerOne: { ...this.state.playerOne, human } })}
+
+                    playerTwoValue={this.state.playerTwo}
+                    setPlayerTwoName={(name) => this.setState({ playerTwo: { ...this.state.playerTwo, name } })}
+                    setPlayerTwoHuman={(human) => this.setState({ playerTwo: { ...this.state.playerTwo, human } })}
+
+                    setGameStart={gameStart => this.setState({ gameStart })}
+                    setAgainstAI={againstAI => this.setState({ againstAI })}
+
+                    setTurn={(turn, callback) => this.setState({ turn }, callback)}
                     gameLoop={this.gameLoop.bind(this)}
                 />
-            ))}
+            </div>
+
+            <div style={{ display: this.state.gameStart ? "" : "none" }}>
+                <div className='menu'>
+                    <Annoucement winner={this.state.winner} gameMessage={this.state.gameMessage}></Annoucement>
+                    <ResetButton reset={this.resetBoard.bind(this)}></ResetButton>
+                </div>
+                <div>
+                    <table style={{ width: "100%", borderCollapse: "collaspe", borderStyle: "hidden" }}>
+                        <tbody>
+                            {Array.from({ length: 3 }, (_, rowIndex) => (
+                                <tr key={rowIndex}>
+                                    {Array.from({ length: 3 }, (_, colIndex) => {
+                                        const i = rowIndex * 3 + colIndex;
+                                        const value = this.state.gameBoard[i];
+                                        return (
+                                            <td style={{ width: "33.3%", border: "2px solid grey" }} key={i}>
+                                                <Tile
+                                                    loc={i}
+                                                    value={value}
+                                                    gameLoop={this.gameLoop.bind(this)}
+                                                />
+                                            </td>
+                                        );
+                                    })}
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     };
 }
