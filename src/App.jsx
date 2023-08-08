@@ -6,11 +6,11 @@ const App = () => {
 
     return (
         <>
-            <Container fluid className='text-center'>
+            <Container fluid className='text-center d-flex min-vh-100 flex-column'>
                 <Row className='p-4 bg-dark text-white'>
                     <h3>Tic Tac Toe Using React</h3>
                 </Row>
-                <Row className='row align-items-center pb-4 bg-secondary'>
+                <Row className='row flex-grow-1 align-items-center pb-4 bg-secondary'>
                     <Col>
                         <TicTacToe></TicTacToe>
                     </Col>
