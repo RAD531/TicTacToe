@@ -18,8 +18,8 @@ class TicTacToe extends Component {
             turn: null,
             gameMessage: null,
             gameStart: false,
-            maxPlayer: 'x',
-            minPlayer: 'o',
+            maxPlayer: null,
+            minPlayer: null,
             playerOne: { name: null, symbol: 'x', human: null },
             playerTwo: { name: null, symbol: 'o', human: null },
             againstAI: false,
@@ -73,7 +73,7 @@ class TicTacToe extends Component {
         let move = null;
 
         //test all possible moves if game not over
-        if (this.winner(board, 'x') || this.winner(board, 'o') || this.tie(board)) {
+        if (this.winner(board, this.state.maxPlayer) || this.winner(board, this.state.minPlayer) || this.tie(board)) {
             return null;
         }
 
@@ -92,11 +92,11 @@ class TicTacToe extends Component {
     }
 
     minScore(board) {
-        if (this.winner(board, 'x')) {
+        if (this.winner(board, this.state.maxPlayer)) {
             return 10;
         }
 
-        else if (this.winner(board, 'o')) {
+        else if (this.winner(board, this.state.minPlayer)) {
             return -10;
         }
 
@@ -121,11 +121,11 @@ class TicTacToe extends Component {
     }
 
     maxScore(board) {
-        if (this.winner(board, 'x')) {
+        if (this.winner(board, this.state.maxPlayer)) {
             return 10;
         }
 
-        else if (this.winner(board, 'o')) {
+        else if (this.winner(board, this.state.minPlayer)) {
             return -10;
         }
 
@@ -152,7 +152,6 @@ class TicTacToe extends Component {
     gameLoop(move) {
 
         let player = this.state.turn;
-        console.log(player);
         let currentGameBoard = null;
 
         if (player.human) {
@@ -176,7 +175,6 @@ class TicTacToe extends Component {
             currentGameBoard = this.state.gameBoard;
             currentGameBoard = this.validMove(this.findAiMove(currentGameBoard), player.symbol, currentGameBoard);
 
-            console.log("run again");
             this.setState(
                 prevState => ({
                     turn: prevState.turn.symbol === "x" ? prevState.playerTwo : prevState.playerOne
@@ -196,6 +194,10 @@ class TicTacToe extends Component {
         }
 
         if (this.winner(currentGameBoard, player.symbol)) {
+            if (!player.name){
+                player.name = "";
+            }
+
             this.setState({
                 gameBoard: currentGameBoard,
                 winner: player.symbol,
@@ -231,8 +233,8 @@ class TicTacToe extends Component {
             turn: null,
             gameMessage: null,
             gameStart: false,
-            maxPlayer: 'x',
-            minPlayer: 'o',
+            maxPlayer: null,
+            minPlayer: null,
             againstAI: false,
         })
     }
@@ -249,6 +251,9 @@ class TicTacToe extends Component {
                     playerTwoValue={this.state.playerTwo}
                     setPlayerTwoName={(name) => this.setState({ playerTwo: { ...this.state.playerTwo, name } })}
                     setPlayerTwoHuman={(human) => this.setState({ playerTwo: { ...this.state.playerTwo, human } })}
+
+                    setMinPlayer={(minPlayer) => this.setState({minPlayer})}
+                    setMaxPlayer={(maxPlayer) => this.setState({maxPlayer})}
 
                     setGameStart={gameStart => this.setState({ gameStart })}
                     setAgainstAI={againstAI => this.setState({ againstAI })}

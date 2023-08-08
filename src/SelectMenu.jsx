@@ -18,27 +18,32 @@ export default class SelectMenu extends Component {
         if (AiPlaying) {
             this.props.setPlayerTwoHuman(false);
             this.props.setPlayerOneHuman(true);
+            this.props.setMinPlayer('o');
+            this.props.setMaxPlayer('x');
 
             let player = { name: this.props.playerOneValue.name, symbol: 'x', human: true };
-            this.props.setTurn(player);
-            this.props.setGameStart(true);
-            return;
+            this.props.setTurn(player, () => {
+                this.props.setGameStart(true);
+                return;
+            });
         }
 
         else {
             this.props.setPlayerOneHuman(true);
             this.props.setPlayerTwoHuman(true);
+            let player = { name: this.props.playerOneValue.name, symbol: 'x', human: true };
+            this.props.setTurn(player);
+            this.props.setGameStart(true);
+            return;
         }
-
-        let player = { name: this.props.playerOneValue.name, symbol: 'x', human: true };
-        this.props.setTurn(player);
-        this.props.setGameStart(true);
     }
 
     setGameStartOnClickPlayerTwo() {
         if (AiPlaying) {
             this.props.setPlayerOneHuman(false);
             this.props.setPlayerTwoHuman(true);
+            this.props.setMinPlayer('x');
+            this.props.setMaxPlayer('o');
 
             let player = { name: this.props.playerOneValue.name, symbol: 'x', human: false};
             this.props.setTurn(player, () => {
